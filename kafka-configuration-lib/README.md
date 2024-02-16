@@ -16,12 +16,16 @@ public void HandleMessage(string message)
 
 Register Kafka Consumer
 ```
-KafkaConsumerConfig config = new KafkaConsumerConfig(
-        bootstrapServerEndpoints: "your-bootstrap-servers",
-        consumerGroupId: "your-group-id"
-    );
-KafkaConsumerRegistrationExample consumerInstance = new KafkaConsumerRegistrationExample();
-KafkaRegistrationHelper.RegisterKafkaConsumers(consumerInstance, config, CancellationToken);
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Configure other services...
+
+        var kafkaConsumerConfig = new KafkaConsumerConfig("localhost:9092", "my-consumer-group");
+        services.AddKafkaConsumers(kafkaConsumerConfig);
+    }
+}
 ```
 
 Kafka Producer
