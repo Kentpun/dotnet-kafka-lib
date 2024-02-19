@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Confluent.Kafka;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace kafka_configuration_lib.Helpers
 {
@@ -35,6 +36,7 @@ namespace kafka_configuration_lib.Helpers
                 }
             }
         }
+
     }
 }
 

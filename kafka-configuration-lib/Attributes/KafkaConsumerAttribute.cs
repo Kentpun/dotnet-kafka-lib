@@ -5,9 +5,11 @@
     public class KafkaConsumerAttribute : Attribute
     {
         public string Topic { get; set; }
-        public KafkaConsumerAttribute(string topic)
+        public Type EventType { get; set; }
+        public KafkaConsumerAttribute(string topic, Type eventType)
         {
             this.Topic = topic;
+            this.EventType = eventType;
         }
     }
 }
