@@ -17,12 +17,14 @@
     <None Remove="Configurations\" />
     <None Remove="Exmaples\" />
     <None Remove="Helpers\" />
+    <None Remove="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\" />
     <Folder Include="Configurations\" />
     <Folder Include="Exmaples\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="2.3.0" />

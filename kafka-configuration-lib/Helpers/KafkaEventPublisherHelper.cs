@@ -15,7 +15,6 @@ namespace kafka_configuration_lib.Helpers
         private static string SerializeEvent<TEvent>(TEvent eventData)
         {
             return JsonConvert.SerializeObject(eventData);
-            // You can use any other serialization library or technique here
         }
     }
 }
