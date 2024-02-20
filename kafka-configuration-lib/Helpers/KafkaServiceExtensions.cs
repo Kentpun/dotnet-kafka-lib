@@ -9,7 +9,7 @@ namespace kafka_configuration_lib.Helpers
 {
 	public static class KafkaServiceExtensions
 	{
-        public static void UseKafkaConsumer(this IServiceCollection services, string groupId, KafkaOptions options, KafkaConsumerConfig consumerConfig)
+        public static void UseKafkaConsumer(this IServiceCollection services, string groupId, KafkaConsumerConfig consumerConfig)
         {
             services.AddSingleton<IConsumerClient, KafkaConsumerClient>();
             services.AddSingleton<KafkaConsumerClientFactory>();
@@ -36,7 +36,7 @@ namespace kafka_configuration_lib.Helpers
                 foreach (var method in methods)
                 {
                     var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
-                    clientFactory.CreateClient(groupId, options, consumerConfig).RegisterMethod(attribute.Topic, method);
+                    clientFactory.CreateClient(groupId, consumerConfig).RegisterMethod(attribute.Topic, method);
                 }
             }
         }
