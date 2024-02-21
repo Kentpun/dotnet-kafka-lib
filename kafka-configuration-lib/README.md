@@ -21,9 +21,12 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         // Configure other services...
-
-        var kafkaConsumerConfig = new KafkaConsumerConfig("localhost:9092", "my-consumer-group");
-        services.AddKafkaConsumers(kafkaConsumerConfig);
+        var kafkaOptions = new KafkaOpions{
+            BootstrapServers: "localhost:9092",
+            ConsumerGroupId: "consumer-group-1"
+        };
+        var kafkaConsumerConfig = new KafkaConsumerConfig(options);
+        services.UseKafkaConsumer(services, kafkaOptions, kafkaConsumerConfig);
     }
 }
 ```

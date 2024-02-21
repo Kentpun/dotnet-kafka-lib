@@ -9,10 +9,10 @@ namespace kafka_configuration_lib.Configurations
         public string ClientId { get; set; }
         public ProducerConfig ProducerConfig;
 
-        public KafkaProducerConfig(string bootstrapServerEndpoints, string clientId)
+        public KafkaProducerConfig(KafkaOptions kafkaOptions)
 		{
-            this.BootstrapServerEndpoints = bootstrapServerEndpoints;
-            this.ClientId = clientId;
+            this.BootstrapServerEndpoints = kafkaOptions.BootstrapServers;
+            this.ClientId = kafkaOptions.ClientId;
             this.ProducerConfig = new ProducerConfig
             {
                 BootstrapServers = BootstrapServerEndpoints,

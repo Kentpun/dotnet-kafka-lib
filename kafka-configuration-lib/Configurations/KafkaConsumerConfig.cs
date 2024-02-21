@@ -8,10 +8,10 @@ namespace kafka_configuration_lib.Configurations
 		public string ConsumerGroupId { get; set; }
 		public ConsumerConfig ConsumerConfig;
 
-		public KafkaConsumerConfig(string bootstrapServerEndpoints, string consumerGroupId)
+		public KafkaConsumerConfig(KafkaOptions kafkaOptions)
 		{
-			this.BootstrapServerEndpoints = bootstrapServerEndpoints;
-			this.ConsumerGroupId = consumerGroupId;
+			this.BootstrapServerEndpoints = kafkaOptions.BootstrapServers;
+			this.ConsumerGroupId = kafkaOptions.ConsumerGroupId;
 			this.ConsumerConfig = new ConsumerConfig
 			{
 				BootstrapServers = BootstrapServerEndpoints,

@@ -28,7 +28,7 @@ public class KafkaConsumerHostedService : BackgroundService
     {
         _logger = logger;
         _cancellationTokenSource = new CancellationTokenSource();
-        _consumerConfig = new KafkaConsumerConfig(options.BootstrapServers, options.ConsumerGroupId);
+        _consumerConfig = new KafkaConsumerConfig(options);
         _consumerClientFactory = consumerClientFactory;
         _consumerClient = _consumerClientFactory.CreateClient(_consumerConfig);
         _topics = topics;
