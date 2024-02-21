@@ -30,6 +30,24 @@ namespace kafka_configuration_lib
             return topicNames.ToList();
         }
 
+        public IEnumerable<TopicPartition> GetTopicPartition(string topic, string bootstrapServers)
+        {
+            var config = new AdminClientConfig
+            {
+                BootstrapServers = bootstrapServers
+            };
+            using (var adminClient = new AdminClientBuilder(config).Build())
+            {
+                var metadata = adminClient.GetMetadata(topic, TimeSpan.FromSeconds(10));
+                if (metadata.Topics.FirstOrDefault(t => t.Topic.Equals(topic)) is TopicMetadata topicMetadata)
+                {
+                    return topicMetadata.Partitions.Select(p => new TopicPartition(topic, p.PartitionId));
+                }
+            }
+
+            return Enumerable.Empty<TopicPartition>();
+        }
+
         private void ConsumerClient_OnConsumeError(IConsumer<string, byte[]> consumer, Error e)
         {
             Console.WriteLine(e.Code + ": "+ e.Reason);
@@ -129,7 +147,6 @@ namespace kafka_configuration_lib
 
         public void InitializeConsumer()
         {
-
             _consumer = new ConsumerBuilder<string, byte[]>(_consumerConfig.ConsumerConfig)
                 .SetErrorHandler((_, e) => Console.WriteLine($"Error: {e.Reason}"))
                 .SetStatisticsHandler((_, json) => Console.WriteLine($"Statistics: {json}"))

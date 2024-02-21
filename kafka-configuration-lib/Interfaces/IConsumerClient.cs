@@ -4,7 +4,7 @@ namespace kafka_configuration_lib.Interfaces
 	public interface IConsumerClient : IDisposable
 	{
         /// <summary>
-        /// Create (if necessary) and get topic identifiers
+        /// Get topic identifiers
         /// </summary>
         /// <param name="topicNames">Names of the requested topics</param>
         /// <returns>Topic identifiers</returns>

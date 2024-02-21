@@ -4,13 +4,17 @@ using Confluent.Kafka;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using kafka_configuration_lib.Interfaces;
+using kafka_configuration_lib.Services;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace kafka_configuration_lib.Helpers
 {
 	public static class KafkaServiceExtensions
 	{
-        public static void UseKafkaConsumer(this IServiceCollection services, string groupId, KafkaConsumerConfig consumerConfig)
+        public static void UseKafkaConsumer(this IServiceCollection services, KafkaOptions kafkaOptions, KafkaConsumerConfig consumerConfig)
         {
+            services.AddSingleton<IHostedService, KafkaConsumerHostedService>();
             services.AddSingleton<IConsumerClient, KafkaConsumerClient>();
             services.AddSingleton<KafkaConsumerClientFactory>();
 
@@ -36,7 +40,12 @@ namespace kafka_configuration_lib.Helpers
                 foreach (var method in methods)
                 {
                     var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
-                    clientFactory.CreateClient(groupId, consumerConfig).RegisterMethod(attribute.Topic, method);
+                    services.AddHostedService(provider => new KafkaConsumerHostedService(
+                        provider.GetRequiredService<KafkaConsumerClientFactory>(),
+                        kafkaOptions,
+                        provider.GetRequiredService<ILogger<KafkaConsumerHostedService>>(),
+                        new[] {attribute.Topic}
+                    ));
                 }
             }
         }
