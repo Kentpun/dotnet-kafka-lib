@@ -6,4 +6,7 @@ public class KafkaOptions
     public int MaxConsumers { get; set; }
     public string ConsumerGroupId { get; set; }
     public string ClientId { get; set; }
+    public string Debug { get; set; }
+    
+    public string Topic { get; set; }
 }

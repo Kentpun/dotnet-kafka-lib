@@ -10,16 +10,16 @@ namespace kafka_configuration_lib
     public class KafkaConsumerClient : IConsumerClient
     {
         private static readonly SemaphoreSlim ConnectionLock = new(1, 1);
-        private readonly string _groupId;
+        private readonly KafkaOptions _options;
         private readonly IServiceProvider _serviceProvider;
         private Dictionary<string, MethodInfo> _topicMethods;
         private readonly KafkaConsumerConfig _consumerConfig;
 
         private IConsumer<string, byte[]> _consumer;
 
-        public KafkaConsumerClient(string groupId, IServiceProvider serviceProvider, KafkaConsumerConfig consumerConfig)
+        public KafkaConsumerClient(KafkaOptions options, IServiceProvider serviceProvider, KafkaConsumerConfig consumerConfig)
         {
-            _groupId = groupId;
+            _options = options;
             _consumerConfig = consumerConfig;
             _topicMethods = new Dictionary<string, MethodInfo>();
             _serviceProvider = serviceProvider;
@@ -72,7 +72,7 @@ namespace kafka_configuration_lib
                 {
                     var config = new ConsumerConfig();
                     config.BootstrapServers ??= _consumerConfig.ConsumerConfig.BootstrapServers;
-                    config.GroupId ??= _groupId;
+                    config.GroupId ??= _options.ConsumerGroupId;
                     config.AutoOffsetReset ??= AutoOffsetReset.Earliest;
                     config.AllowAutoCreateTopics ??= true;
                     config.EnableAutoCommit ??= false;

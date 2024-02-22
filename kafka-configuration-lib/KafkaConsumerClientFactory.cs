@@ -17,9 +17,9 @@ namespace kafka_configuration_lib
             _serviceProvider = serviceProvider;
         }
 
-        public KafkaConsumerClient CreateClient(KafkaConsumerConfig consumerConfig)
+        public KafkaConsumerClient CreateClient(KafkaOptions options, KafkaConsumerConfig consumerConfig)
         {
-            var client = ActivatorUtilities.CreateInstance<KafkaConsumerClient>(_serviceProvider, consumerConfig.ConsumerGroupId, _serviceProvider, consumerConfig);
+            var client = new KafkaConsumerClient(options, _serviceProvider, consumerConfig);
             var methods = GetMethodsAnnotatedWithKafkaConsumerAttribute();
             foreach (var method in methods)
             {

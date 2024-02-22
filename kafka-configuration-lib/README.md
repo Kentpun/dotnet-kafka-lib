@@ -20,13 +20,17 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        // Configure other services...
-        var kafkaOptions = new KafkaOpions{
-            BootstrapServers: "localhost:9092",
-            ConsumerGroupId: "consumer-group-1"
+        var bootstrapServers = builder.Configuration.GetValue<string>("Kafka:BootstrapServers");
+        var consumerGroupId = builder.Configuration.GetValue<string>("Kafka:ConsumerGroupId");
+        KafkaOptions kafkaOptions = new KafkaOptions
+        {
+            BootstrapServers = bootstrapServers,
+            ConsumerGroupId = consumerGroupId
         };
-        var kafkaConsumerConfig = new KafkaConsumerConfig(options);
-        services.UseKafkaConsumer(services, kafkaOptions, kafkaConsumerConfig);
+        builder.Services.AddSingleton(kafkaOptions);
+        var kafkaConsumerConfig = new KafkaConsumerConfig(kafkaOptions);
+        
+        builder.Services.UseKafkaConsumer(kafkaOptions, kafkaConsumerConfig);
     }
 }
 ```

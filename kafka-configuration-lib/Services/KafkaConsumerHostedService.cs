@@ -24,13 +24,14 @@ public class KafkaConsumerHostedService : BackgroundService
         KafkaConsumerClientFactory consumerClientFactory, 
         KafkaOptions options, 
         ILogger<KafkaConsumerHostedService> logger,
-        IEnumerable<string> topics)
+        List<string> topics)
     {
         _logger = logger;
         _cancellationTokenSource = new CancellationTokenSource();
+        _kafkaOptions = options;
         _consumerConfig = new KafkaConsumerConfig(options);
         _consumerClientFactory = consumerClientFactory;
-        _consumerClient = _consumerClientFactory.CreateClient(_consumerConfig);
+        _consumerClient = _consumerClientFactory.CreateClient(_kafkaOptions, _consumerConfig);
         _topics = topics;
     }
     
@@ -38,6 +39,9 @@ public class KafkaConsumerHostedService : BackgroundService
     {
         try
         {
+            _logger.LogInformation(_consumerConfig.ConsumerConfig.BootstrapServers);
+            _logger.LogInformation(_consumerConfig.ConsumerConfig.GroupId);
+            _logger.LogInformation(_topics.Count().ToString());
             _consumerClient.Subscribe(_topics);
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -46,7 +50,7 @@ public class KafkaConsumerHostedService : BackgroundService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in ExecuteAsync: {ex.Message}");
+            _logger.LogError($"Error in ExecuteAsync: {ex}");
         }
         finally
         {

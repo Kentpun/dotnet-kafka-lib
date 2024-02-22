@@ -16,7 +16,8 @@ namespace kafka_configuration_lib.Configurations
 			{
 				BootstrapServers = BootstrapServerEndpoints,
 				GroupId = ConsumerGroupId,
-				AutoOffsetReset = AutoOffsetReset.Earliest
+				AutoOffsetReset = AutoOffsetReset.Earliest,
+				Debug = kafkaOptions.Debug
 			};
 
         }

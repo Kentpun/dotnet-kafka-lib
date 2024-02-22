@@ -14,8 +14,6 @@ namespace kafka_configuration_lib.Helpers
 	{
         public static void UseKafkaConsumer(this IServiceCollection services, KafkaOptions kafkaOptions, KafkaConsumerConfig consumerConfig)
         {
-            services.AddSingleton<IHostedService, KafkaConsumerHostedService>();
-            services.AddSingleton<IConsumerClient, KafkaConsumerClient>();
             services.AddSingleton<KafkaConsumerClientFactory>();
 
             // Retrieve the registered KafkaConsumerClientFactory
@@ -40,11 +38,11 @@ namespace kafka_configuration_lib.Helpers
                 foreach (var method in methods)
                 {
                     var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
-                    services.AddHostedService(provider => new KafkaConsumerHostedService(
-                        provider.GetRequiredService<KafkaConsumerClientFactory>(),
+                    services.AddHostedService<KafkaConsumerHostedService>(provider => new KafkaConsumerHostedService(
+                        clientFactory,
                         kafkaOptions,
                         provider.GetRequiredService<ILogger<KafkaConsumerHostedService>>(),
-                        new[] {attribute.Topic}
+                        new List<string>(){attribute.Topic}
                     ));
                 }
             }
