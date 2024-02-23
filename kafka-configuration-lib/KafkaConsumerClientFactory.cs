@@ -20,29 +20,34 @@ namespace kafka_configuration_lib
         public KafkaConsumerClient CreateClient(KafkaOptions options, KafkaConsumerConfig consumerConfig)
         {
             var client = new KafkaConsumerClient(options, _serviceProvider, consumerConfig);
-            var methods = GetMethodsAnnotatedWithKafkaConsumerAttribute();
-            foreach (var method in methods)
+            var items = GetInstancesWithMethodAttribute(_serviceProvider);
+            foreach (var item in items)
             {
+                var instance = item.Item1;
+                var method = item.Item2;
+                Console.WriteLine(instance);
+                Console.WriteLine(method);
                 var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
-                client.RegisterMethod(attribute.Topic, method);
+                client.RegisterMethod(attribute.Topic, method, instance);
                 client.InitializeConsumer();
             }
             return client;
         }
 
-        public IEnumerable<KafkaConsumerClient> CreateClients(KafkaConsumerConfig consumerConfig)
+        public IEnumerable<KafkaConsumerClient> CreateClients(KafkaOptions options, KafkaConsumerConfig consumerConfig)
         {
             List<KafkaConsumerClient> kafkaConsumerClients = new List<KafkaConsumerClient>();
-            var methods = GetMethodsAnnotatedWithKafkaConsumerAttribute();
-            foreach (var method in methods)
+            var items = GetInstancesWithMethodAttribute(_serviceProvider);
+            foreach (var item in items)
             {
-                
+                var instance = item.Item1;
+                var method = item.Item2;
                 var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
                 IEnumerable<TopicPartition> topicPartitions = KafkaAdminHelper.GetTopicPartition(attribute.Topic, consumerConfig.BootstrapServerEndpoints);
-                for (int partition = 0; partition < topicPartitions.Count(); partition++)
+                for (int partition = 0; partition < topicPartitions.Count() || partition < options.MaxConsumers; partition++)
                 {
                     var client = ActivatorUtilities.CreateInstance<KafkaConsumerClient>(_serviceProvider, consumerConfig.ConsumerGroupId, _serviceProvider, consumerConfig);
-                    client.RegisterMethod(attribute.Topic, method);
+                    client.RegisterMethod(attribute.Topic, method, instance);
                     kafkaConsumerClients.Add(client);
                 }
                 
@@ -58,6 +63,19 @@ namespace kafka_configuration_lib
                 .Where(method => method.GetCustomAttributes(typeof(KafkaConsumerAttribute), false).Length > 0);
             return methods;
         }
+        
+        private IEnumerable<Tuple<object, MethodInfo>> GetInstancesWithMethodAttribute(IServiceProvider serviceProvider)
+        {
+            var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+
+            var instancesWithMethods = assembly.GetTypes()
+                .SelectMany(type => type.GetMethods())
+                .Where(method => method.GetCustomAttributes(typeof(KafkaConsumerAttribute), false).Length > 0)
+                .Select(method => Tuple.Create(serviceProvider.GetService(method.DeclaringType), method));
+
+            return instancesWithMethods;
+        }
+
     }
 }
 

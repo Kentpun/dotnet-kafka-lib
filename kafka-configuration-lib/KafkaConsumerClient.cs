@@ -13,6 +13,7 @@ namespace kafka_configuration_lib
         private readonly KafkaOptions _options;
         private readonly IServiceProvider _serviceProvider;
         private Dictionary<string, MethodInfo> _topicMethods;
+        private Dictionary<string, object> _topicMethodInstances;
         private readonly KafkaConsumerConfig _consumerConfig;
 
         private IConsumer<string, byte[]> _consumer;
@@ -22,6 +23,7 @@ namespace kafka_configuration_lib
             _options = options;
             _consumerConfig = consumerConfig;
             _topicMethods = new Dictionary<string, MethodInfo>();
+            _topicMethodInstances = new Dictionary<string, object>();
             _serviceProvider = serviceProvider;
         }
 
@@ -112,10 +114,11 @@ namespace kafka_configuration_lib
                     {
                         var topic = consumeResult.Topic;
                         var message = consumeResult.Message.Value;
-                        if (_topicMethods.TryGetValue(topic, out MethodInfo method))
+                        if (_topicMethods.TryGetValue(topic, out MethodInfo method) && 
+                            _topicMethodInstances.TryGetValue(topic, out object instance))
                         {
                             var parameters = new object[] { message };
-                            method.Invoke(null, parameters);
+                            method.Invoke(instance, parameters);
                         }
                     }
                 }
@@ -140,9 +143,10 @@ namespace kafka_configuration_lib
             _consumer.Commit((ConsumeResult<string, byte[]>)sender!);
         }
 
-        public void RegisterMethod(string topic, MethodInfo method)
+        public void RegisterMethod(string topic, MethodInfo method, object targetInstance)
         {
             _topicMethods[topic] = method;
+            _topicMethodInstances[topic] = targetInstance;
         }
 
         public void InitializeConsumer()
