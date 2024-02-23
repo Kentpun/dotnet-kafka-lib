@@ -30,7 +30,6 @@ public class Startup
 	};
 
 	builder.Services.AddLogging();
-	builder.Services.AddSingleton(kafkaOptions);
 	var kafkaConsumerConfig = new KafkaConsumerConfig(kafkaOptions);
 	builder.Services.AddSingleton<TestConsumer>();
 	builder.Services.UseKafkaConsumer(kafkaOptions, kafkaConsumerConfig);
