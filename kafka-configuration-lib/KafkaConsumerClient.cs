@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using Confluent.Kafka;
 using kafka_configuration_lib.Configurations;
+using kafka_configuration_lib.Helpers;
 using kafka_configuration_lib.Interfaces;
 
 namespace kafka_configuration_lib
@@ -15,16 +16,18 @@ namespace kafka_configuration_lib
         private Dictionary<string, MethodInfo> _topicMethods;
         private Dictionary<string, object> _topicMethodInstances;
         private readonly KafkaConsumerConfig _consumerConfig;
+        private readonly Type _eventType;
 
         private IConsumer<string, byte[]> _consumer;
 
-        public KafkaConsumerClient(KafkaOptions options, IServiceProvider serviceProvider, KafkaConsumerConfig consumerConfig)
+        public KafkaConsumerClient(KafkaOptions options, IServiceProvider serviceProvider, KafkaConsumerConfig consumerConfig, Type eventType)
         {
             _options = options;
             _consumerConfig = consumerConfig;
             _topicMethods = new Dictionary<string, MethodInfo>();
             _topicMethodInstances = new Dictionary<string, object>();
             _serviceProvider = serviceProvider;
+            _eventType = eventType;
         }
 
         public ICollection<string> FetchTopics(IEnumerable<string> topicNames)
@@ -110,15 +113,39 @@ namespace kafka_configuration_lib
                 try
                 {
                     var consumeResult = _consumer.Consume(timeout);
+                    
                     if (consumeResult != null && consumeResult.Message != null)
                     {
-                        var topic = consumeResult.Topic;
-                        var message = consumeResult.Message.Value;
-                        if (_topicMethods.TryGetValue(topic, out MethodInfo method) && 
-                            _topicMethodInstances.TryGetValue(topic, out object instance))
+                        var messageTypeHeader = consumeResult.Message.Headers
+                            .FirstOrDefault(h => h.Key == "MessageType");
+                        
+                        if (messageTypeHeader != null)
                         {
-                            var parameters = new object[] { message };
-                            method.Invoke(instance, parameters);
+                            var messageType = Encoding.UTF8.GetString(messageTypeHeader.GetValueBytes());
+
+                            // Check if the message type matches what you expect
+                            if (messageType == _eventType.FullName)
+                            {
+                                // Process the message
+                                Console.WriteLine($"Message Content: {Encoding.UTF8.GetString(consumeResult.Message.Value)}");
+                                var topic = consumeResult.Topic;
+                                var message = consumeResult.Message.Value;
+                                var deserializedMessage = KafkaEventConsumerHelper.DeserializeEvent(_eventType, message);
+                                if (_topicMethods.TryGetValue(topic, out MethodInfo method) && 
+                                    _topicMethodInstances.TryGetValue(topic, out object instance))
+                                {
+                                    var parameters = new object[] { deserializedMessage };
+                                    method.Invoke(instance, parameters);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Unexpected message type: {messageType}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Message type not found in headers.");
                         }
                     }
                 }
@@ -132,7 +159,6 @@ namespace kafka_configuration_lib
                     // Handle exception
                     Console.WriteLine($"Error consuming message: {ex.Message}");
                 }
-
                 
             }
         }

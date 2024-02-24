@@ -19,19 +19,22 @@ public class KafkaConsumerHostedService : BackgroundService
     private readonly KafkaConsumerClient _consumerClient;
     private readonly KafkaConsumerClientFactory _consumerClientFactory;
     private readonly IEnumerable<string> _topics;
+    private readonly Type _eventType;
 
     public KafkaConsumerHostedService(
         KafkaConsumerClientFactory consumerClientFactory, 
         KafkaOptions options, 
         ILogger<KafkaConsumerHostedService> logger,
-        List<string> topics)
+        List<string> topics,
+        Type eventType)
     {
         _logger = logger;
         _cancellationTokenSource = new CancellationTokenSource();
         _kafkaOptions = options;
+        _eventType = eventType;
         _consumerConfig = new KafkaConsumerConfig(options);
         _consumerClientFactory = consumerClientFactory;
-        _consumerClient = _consumerClientFactory.CreateClient(_kafkaOptions, _consumerConfig);
+        _consumerClient = _consumerClientFactory.CreateClient(_kafkaOptions, _consumerConfig, _eventType);
         _topics = topics;
     }
     

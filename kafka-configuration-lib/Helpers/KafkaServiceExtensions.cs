@@ -38,11 +38,13 @@ namespace kafka_configuration_lib.Helpers
                 foreach (var method in methods)
                 {
                     var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
+                    var eventType = attribute.EventType;
                     services.AddHostedService<KafkaConsumerHostedService>(provider => new KafkaConsumerHostedService(
                         clientFactory,
                         kafkaOptions,
                         provider.GetRequiredService<ILogger<KafkaConsumerHostedService>>(),
-                        new List<string>(){attribute.Topic}
+                        new List<string>(){attribute.Topic},
+                        eventType
                     ));
                 }
             }

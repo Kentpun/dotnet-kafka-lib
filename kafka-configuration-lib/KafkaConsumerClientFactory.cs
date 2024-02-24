@@ -17,9 +17,9 @@ namespace kafka_configuration_lib
             _serviceProvider = serviceProvider;
         }
 
-        public KafkaConsumerClient CreateClient(KafkaOptions options, KafkaConsumerConfig consumerConfig)
+        public KafkaConsumerClient CreateClient(KafkaOptions options, KafkaConsumerConfig consumerConfig, Type eventType)
         {
-            var client = new KafkaConsumerClient(options, _serviceProvider, consumerConfig);
+            var client = new KafkaConsumerClient(options, _serviceProvider, consumerConfig, eventType);
             var items = GetInstancesWithMethodAttribute(_serviceProvider);
             foreach (var item in items)
             {

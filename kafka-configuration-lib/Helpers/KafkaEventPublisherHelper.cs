@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
@@ -6,15 +7,10 @@ namespace kafka_configuration_lib.Helpers
 {
 	public static class KafkaEventPublisherHelper
 	{
-        public static void PublishEvent<TEvent>(IProducer<Null, string> producer, string topic, TEvent eventData)
+        public static byte[] SerializeEvent(object message)
         {
-            var serializedData = SerializeEvent(eventData);
-            producer.Produce(topic, new Message<Null, string> { Value = serializedData });
-        }
-
-        private static string SerializeEvent<TEvent>(TEvent eventData)
-        {
-            return JsonConvert.SerializeObject(eventData);
+            string jsonString = JsonConvert.SerializeObject(message);
+            return Encoding.UTF8.GetBytes(jsonString);
         }
     }
 }

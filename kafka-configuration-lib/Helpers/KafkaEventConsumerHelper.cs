@@ -1,16 +1,15 @@
 ﻿using System;
-using Confluent.Kafka;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace kafka_configuration_lib.Helpers
 {
 	public static class KafkaEventConsumerHelper
 	{
-		public static TEvent DeserializeEvent<TEvent>(ConsumeResult<Ignore, string> message)
+		public static object DeserializeEvent(Type eventType, byte[] message)
 		{
-			var jsonString = message.Message.Value;
-			var eventData = JsonConvert.DeserializeObject<TEvent>(jsonString);
-			return eventData;
+			string jsonString = Encoding.UTF8.GetString(message);
+			return JsonConvert.DeserializeObject(jsonString, eventType);
 		}
 	}
 }
