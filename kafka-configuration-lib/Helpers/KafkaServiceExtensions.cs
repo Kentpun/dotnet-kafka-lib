@@ -3,16 +3,19 @@ using kafka_configuration_lib.Configurations;
 using Confluent.Kafka;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using kafka_configuration_lib.Interfaces;
 using kafka_configuration_lib.Services;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace kafka_configuration_lib.Helpers
 {
 	public static class KafkaServiceExtensions
 	{
-        public static void UseKafkaConsumer(this IServiceCollection services, KafkaOptions kafkaOptions, KafkaConsumerConfig consumerConfig)
+        public static void UseKafkaProducer(this IServiceCollection services)
+        {
+            services.AddSingleton<KafkaProducerClientFactory>();
+        }
+        
+        public static void UseKafkaConsumer(this IServiceCollection services, KafkaOptions kafkaOptions)
         {
             services.AddSingleton<KafkaConsumerClientFactory>();
 

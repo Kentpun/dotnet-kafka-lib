@@ -1,10 +1,5 @@
 using kafka_configuration_lib.Configurations;
-using kafka_configuration_lib.Interfaces;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace kafka_configuration_lib.Services;
@@ -34,7 +29,7 @@ public class KafkaConsumerHostedService : BackgroundService
         _eventType = eventType;
         _consumerConfig = new KafkaConsumerConfig(options);
         _consumerClientFactory = consumerClientFactory;
-        _consumerClient = _consumerClientFactory.CreateClient(_kafkaOptions, _consumerConfig, _eventType);
+        _consumerClient = _consumerClientFactory.CreateClient(_kafkaOptions, _eventType);
         _topics = topics;
     }
     

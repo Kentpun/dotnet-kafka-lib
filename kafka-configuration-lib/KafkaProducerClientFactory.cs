@@ -11,9 +11,9 @@ public class KafkaProducerClientFactory
         _serviceProvider = serviceProvider;
     }
     
-    public KafkaProducerClient CreateClient(KafkaOptions options, KafkaProducerConfig producerConfig, Type eventType)
+    public KafkaProducerClient CreateClient(KafkaOptions options, Type eventType)
     {
-        var client = new KafkaProducerClient(options, _serviceProvider, producerConfig, eventType);
+        var client = new KafkaProducerClient(options, _serviceProvider, eventType);
         client.InitializeProducer();
         return client;
     }

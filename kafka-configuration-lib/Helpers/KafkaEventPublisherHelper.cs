@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using Confluent.Kafka;
 using Newtonsoft.Json;
 
 namespace kafka_configuration_lib.Helpers

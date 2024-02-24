@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Confluent.Kafka;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using kafka_configuration_lib.Configurations;
 using kafka_configuration_lib.Helpers;
@@ -17,9 +16,9 @@ namespace kafka_configuration_lib
             _serviceProvider = serviceProvider;
         }
 
-        public KafkaConsumerClient CreateClient(KafkaOptions options, KafkaConsumerConfig consumerConfig, Type eventType)
+        public KafkaConsumerClient CreateClient(KafkaOptions options, Type eventType)
         {
-            var client = new KafkaConsumerClient(options, _serviceProvider, consumerConfig, eventType);
+            var client = new KafkaConsumerClient(options, _serviceProvider, eventType);
             var items = GetInstancesWithMethodAttribute(_serviceProvider);
             foreach (var item in items)
             {
@@ -34,7 +33,7 @@ namespace kafka_configuration_lib
             return client;
         }
 
-        public IEnumerable<KafkaConsumerClient> CreateClients(KafkaOptions options, KafkaConsumerConfig consumerConfig)
+        public IEnumerable<KafkaConsumerClient> CreateClients(KafkaOptions options)
         {
             List<KafkaConsumerClient> kafkaConsumerClients = new List<KafkaConsumerClient>();
             var items = GetInstancesWithMethodAttribute(_serviceProvider);
@@ -43,10 +42,10 @@ namespace kafka_configuration_lib
                 var instance = item.Item1;
                 var method = item.Item2;
                 var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
-                IEnumerable<TopicPartition> topicPartitions = KafkaAdminHelper.GetTopicPartition(attribute.Topic, consumerConfig.BootstrapServerEndpoints);
+                IEnumerable<TopicPartition> topicPartitions = KafkaAdminHelper.GetTopicPartition(attribute.Topic, options.BootstrapServers);
                 for (int partition = 0; partition < topicPartitions.Count() || partition < options.MaxConsumers; partition++)
                 {
-                    var client = ActivatorUtilities.CreateInstance<KafkaConsumerClient>(_serviceProvider, consumerConfig.ConsumerGroupId, _serviceProvider, consumerConfig);
+                    var client = ActivatorUtilities.CreateInstance<KafkaConsumerClient>(_serviceProvider, options.ConsumerGroupId, _serviceProvider);
                     client.RegisterMethod(attribute.Topic, method, instance);
                     kafkaConsumerClients.Add(client);
                 }

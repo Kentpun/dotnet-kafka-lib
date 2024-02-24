@@ -14,10 +14,10 @@ public class KafkaProducerClient : IProducerClient
     private readonly Type _eventType;
     private IProducer<string, byte[]> _producer;
 
-    public KafkaProducerClient(KafkaOptions options, IServiceProvider serviceProvider, KafkaProducerConfig producerConfig, Type eventType)
+    public KafkaProducerClient(KafkaOptions options, IServiceProvider serviceProvider, Type eventType)
     {
         _options = options;
-        _producerConfig = producerConfig;
+        _producerConfig = new KafkaProducerConfig(options);
         _serviceProvider = serviceProvider;
         _eventType = eventType;
     }

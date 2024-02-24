@@ -20,10 +20,10 @@ namespace kafka_configuration_lib
 
         private IConsumer<string, byte[]> _consumer;
 
-        public KafkaConsumerClient(KafkaOptions options, IServiceProvider serviceProvider, KafkaConsumerConfig consumerConfig, Type eventType)
+        public KafkaConsumerClient(KafkaOptions options, IServiceProvider serviceProvider, Type eventType)
         {
             _options = options;
-            _consumerConfig = consumerConfig;
+            _consumerConfig = new KafkaConsumerConfig(options);
             _topicMethods = new Dictionary<string, MethodInfo>();
             _topicMethodInstances = new Dictionary<string, object>();
             _serviceProvider = serviceProvider;
