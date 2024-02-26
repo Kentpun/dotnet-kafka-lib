@@ -37,11 +37,10 @@ public class Startup
             ConsumerGroupId = consumerGroupId,
             Debug = "generic" // or "generic,broker,security"
         };
-    
-        services.AddLogging();
-        var kafkaConsumerConfig = new KafkaConsumerConfig(kafkaOptions);
-        services.AddSingleton<TestConsumer>();
-        services.UseKafkaConsumer(kafkaOptions, kafkaConsumerConfig);
+        
+        builder.Services.AddLogging();
+        builder.Services.AddSingleton<TestConsumer>();
+        builder.Services.UseKafkaConsumer(kafkaOptions);
     }
 }
 ```
