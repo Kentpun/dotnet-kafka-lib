@@ -1,4 +1,6 @@
+using System.Reflection;
 using kafka_configuration_lib.Configurations;
+using kafka_configuration_lib.Examples;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -15,13 +17,17 @@ public class KafkaConsumerHostedService : BackgroundService
     private readonly KafkaConsumerClientFactory _consumerClientFactory;
     private readonly IEnumerable<string> _topics;
     private readonly Type _eventType;
+    private readonly MethodInfo _methodInfo;
+    private readonly Object _declaringType;
 
     public KafkaConsumerHostedService(
         KafkaConsumerClientFactory consumerClientFactory, 
         KafkaOptions options, 
         ILogger<KafkaConsumerHostedService> logger,
         List<string> topics,
-        Type eventType)
+        Type eventType,
+        MethodInfo methodInfo,
+        Object declaringType)
     {
         _logger = logger;
         _cancellationTokenSource = new CancellationTokenSource();
@@ -29,8 +35,11 @@ public class KafkaConsumerHostedService : BackgroundService
         _eventType = eventType;
         _consumerConfig = new KafkaConsumerConfig(options);
         _consumerClientFactory = consumerClientFactory;
-        _consumerClient = _consumerClientFactory.CreateClient(_kafkaOptions, _eventType);
+        
         _topics = topics;
+        _methodInfo = methodInfo;
+        _declaringType = declaringType;
+        _consumerClient = _consumerClientFactory.CreateClient(_methodInfo, _declaringType, _kafkaOptions, _eventType);
     }
     
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -43,7 +52,10 @@ public class KafkaConsumerHostedService : BackgroundService
             _consumerClient.Subscribe(_topics);
             while (!cancellationToken.IsCancellationRequested)
             {
-                _consumerClient.Listening(TimeSpan.FromMilliseconds(1000), cancellationToken);
+                await Task.Run(() =>
+                {
+                    _consumerClient.Listening(TimeSpan.FromMilliseconds(1000), cancellationToken);
+                });
             }
         }
         catch (Exception ex)

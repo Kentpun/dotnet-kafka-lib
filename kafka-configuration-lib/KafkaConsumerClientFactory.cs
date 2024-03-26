@@ -16,27 +16,27 @@ namespace kafka_configuration_lib
             _serviceProvider = serviceProvider;
         }
 
-        public KafkaConsumerClient CreateClient(KafkaOptions options, Type eventType)
+        public KafkaConsumerClient CreateClient(MethodInfo methodInfo, Object instance, KafkaOptions options, Type eventType)
         {
+            Console.WriteLine("=======");
+            Console.WriteLine(methodInfo.Name);
             var client = new KafkaConsumerClient(options, _serviceProvider, eventType);
-            var items = GetInstancesWithMethodAttribute(_serviceProvider);
-            foreach (var item in items)
-            {
-                var instance = item.Item1;
-                var method = item.Item2;
-                Console.WriteLine(instance);
-                Console.WriteLine(method);
-                var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
-                client.RegisterMethod(attribute.Topic, method, instance);
-                client.InitializeConsumer();
-            }
+            // var item = GetInstanceWithMethodAttribute(methodInfo, _serviceProvider);
+            //
+            // var instance = item.Item1;
+            // var method = item.Item2;
+            Console.WriteLine(instance);
+            Console.WriteLine(methodInfo);
+            var attribute = methodInfo.GetCustomAttribute<KafkaConsumerAttribute>();
+            client.RegisterMethod(attribute.Topic, methodInfo, instance);
+            client.InitializeConsumer();
             return client;
         }
 
-        public IEnumerable<KafkaConsumerClient> CreateClients(KafkaOptions options)
+        public IEnumerable<KafkaConsumerClient> CreateClients(List<MethodInfo> methodInfos, KafkaOptions options)
         {
             List<KafkaConsumerClient> kafkaConsumerClients = new List<KafkaConsumerClient>();
-            var items = GetInstancesWithMethodAttribute(_serviceProvider);
+            var items = GetInstancesWithMethodAttribute(methodInfos, _serviceProvider);
             foreach (var item in items)
             {
                 var instance = item.Item1;
@@ -63,13 +63,26 @@ namespace kafka_configuration_lib
             return methods;
         }
         
-        private IEnumerable<Tuple<object, MethodInfo>> GetInstancesWithMethodAttribute(IServiceProvider serviceProvider)
+        private Tuple<object, MethodInfo> GetInstanceWithMethodAttribute(MethodInfo methodInfo, IServiceProvider serviceProvider)
+        {
+            var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+
+            var instanceWithMethod = assembly.GetTypes()
+                .SelectMany(type => type.GetMethods())
+                .Where(method => method.Name == methodInfo.Name && method.GetCustomAttributes(typeof(KafkaConsumerAttribute), false).Length > 0)
+                .Select(method => Tuple.Create(serviceProvider.GetService(method.DeclaringType), method))
+                .FirstOrDefault();
+
+            return instanceWithMethod;
+        }
+        
+        private IEnumerable<Tuple<object, MethodInfo>> GetInstancesWithMethodAttribute(List<MethodInfo> methodInfos, IServiceProvider serviceProvider)
         {
             var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
 
             var instancesWithMethods = assembly.GetTypes()
                 .SelectMany(type => type.GetMethods())
-                .Where(method => method.GetCustomAttributes(typeof(KafkaConsumerAttribute), false).Length > 0)
+                .Where(method => methodInfos.Any(info => method.Name == info.Name) && method.GetCustomAttributes(typeof(KafkaConsumerAttribute), false).Length > 0)
                 .Select(method => Tuple.Create(serviceProvider.GetService(method.DeclaringType), method));
 
             return instancesWithMethods;

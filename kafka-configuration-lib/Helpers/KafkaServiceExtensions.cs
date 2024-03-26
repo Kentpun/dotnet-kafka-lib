@@ -4,6 +4,7 @@ using Confluent.Kafka;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using kafka_configuration_lib.Services;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace kafka_configuration_lib.Helpers
@@ -31,24 +32,29 @@ namespace kafka_configuration_lib.Helpers
                 .Where(type => type.GetMethods()
                     .Any(method => method.GetCustomAttributes(typeof(KafkaConsumerAttribute), false).Length > 0))
                 .ToList();
-
+            
             // Register the annotated methods with the KafkaConsumerClient
             foreach (var type in typesWithConsumers)
             {
                 var methods = type.GetMethods()
                     .Where(method => method.GetCustomAttributes(typeof(KafkaConsumerAttribute), false).Length > 0);
-
+                
                 foreach (var method in methods)
                 {
+                    var declaringType = serviceProvider.GetService(method.DeclaringType);
                     var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
                     var eventType = attribute.EventType;
-                    services.AddHostedService<KafkaConsumerHostedService>(provider => new KafkaConsumerHostedService(
+                    Console.WriteLine($"Registering KafkaConsumer: Class: {declaringType.ToString()}; EventType: {eventType.Name}; MethodName: {method.Name}");
+                    services.AddSingleton<IHostedService, KafkaConsumerHostedService>(provider => new KafkaConsumerHostedService(
                         clientFactory,
                         kafkaOptions,
                         provider.GetRequiredService<ILogger<KafkaConsumerHostedService>>(),
-                        new List<string>(){attribute.Topic},
-                        eventType
+                        new List<string>() { attribute.Topic },
+                        eventType,
+                        method,
+                        declaringType
                     ));
+                    Console.WriteLine($"Registration Succeed: {declaringType.ToString()}.{method.Name}");
                 }
             }
         }
