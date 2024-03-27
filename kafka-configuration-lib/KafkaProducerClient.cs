@@ -14,12 +14,11 @@ public class KafkaProducerClient : IProducerClient
     private readonly Type _eventType;
     private IProducer<string, byte[]> _producer;
 
-    public KafkaProducerClient(KafkaOptions options, IServiceProvider serviceProvider, Type eventType)
+    public KafkaProducerClient(KafkaOptions options, IServiceProvider serviceProvider)
     {
         _options = options;
         _producerConfig = new KafkaProducerConfig(options);
         _serviceProvider = serviceProvider;
-        _eventType = eventType;
     }
 
     
@@ -53,10 +52,6 @@ public class KafkaProducerClient : IProducerClient
             // Handle exception
             Console.WriteLine($"Error producing message: {ex.Message}");
         }
-        
-        
-        
-
         
     }
 }

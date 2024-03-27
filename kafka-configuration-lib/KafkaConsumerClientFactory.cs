@@ -18,8 +18,6 @@ namespace kafka_configuration_lib
 
         public KafkaConsumerClient CreateClient(MethodInfo methodInfo, Object instance, KafkaOptions options, Type eventType)
         {
-            Console.WriteLine("=======");
-            Console.WriteLine(methodInfo.Name);
             var client = new KafkaConsumerClient(options, _serviceProvider, eventType);
             // var item = GetInstanceWithMethodAttribute(methodInfo, _serviceProvider);
             //

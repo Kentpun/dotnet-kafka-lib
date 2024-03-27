@@ -83,7 +83,7 @@ public class Producer
     public void InitializeClient(Type eventType)
     {
         _eventType = eventType;
-        _producerClient = _serviceProvider.GetService<KafkaProducerClientFactory>().CreateClient(_kafkaOptions, _eventType);
+        _producerClient = _serviceProvider.GetService<KafkaProducerClientFactory>().CreateClient(_kafkaOptions);
     }
     
     public void TestPublish(TestClass data)
