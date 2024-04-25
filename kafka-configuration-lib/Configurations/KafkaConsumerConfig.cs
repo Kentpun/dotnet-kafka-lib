@@ -20,14 +20,10 @@ namespace kafka_configuration_lib.Configurations
 				Debug = kafkaOptions.Debug
 			};
 
-			if (kafkaOptions.UseSasl)
-			{
-				this.ConsumerConfig.SaslMechanism = Enum.Parse<SaslMechanism>(kafkaOptions.SaslMechanism);
-                this.ConsumerConfig.SecurityProtocol = Enum.Parse<SecurityProtocol>(kafkaOptions.SecurityProtocol);
-                this.ConsumerConfig.SaslUsername = kafkaOptions.SaslUsername;
-                this.ConsumerConfig.SaslPassword = kafkaOptions.SaslPassword;
-			}
-
+			this.ConsumerConfig.SaslMechanism = kafkaOptions.UseSasl ? Enum.Parse<SaslMechanism>(kafkaOptions.SaslMechanism) : null;
+            this.ConsumerConfig.SecurityProtocol = kafkaOptions.UseSasl ? Enum.Parse<SecurityProtocol>(kafkaOptions.SecurityProtocol) : null;
+            this.ConsumerConfig.SaslUsername = kafkaOptions.UseSasl ? kafkaOptions.SaslUsername : "";
+            this.ConsumerConfig.SaslPassword = kafkaOptions.UseSasl ? kafkaOptions.SaslPassword : "";
         }
 	}
 }

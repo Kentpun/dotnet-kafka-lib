@@ -24,13 +24,10 @@ namespace kafka_configuration_lib.Configurations
                 MaxInFlight = 5
             };
 
-            if (kafkaOptions.UseSasl)
-            {
-                this.ProducerConfig.SaslMechanism = Enum.Parse<SaslMechanism>(kafkaOptions.SaslMechanism);
-                this.ProducerConfig.SecurityProtocol = Enum.Parse<SecurityProtocol>(kafkaOptions.SecurityProtocol);
-                this.ProducerConfig.SaslUsername = kafkaOptions.SaslUsername;
-                this.ProducerConfig.SaslPassword = kafkaOptions.SaslPassword;
-            }
+            this.ProducerConfig.SaslMechanism = kafkaOptions.UseSasl ? Enum.Parse<SaslMechanism>(kafkaOptions.SaslMechanism) : null;
+            this.ProducerConfig.SecurityProtocol = kafkaOptions.UseSasl ? Enum.Parse<SecurityProtocol>(kafkaOptions.SecurityProtocol) : null;
+            this.ProducerConfig.SaslUsername = kafkaOptions.UseSasl ? kafkaOptions.SaslUsername : "";
+            this.ProducerConfig.SaslPassword = kafkaOptions.UseSasl ? kafkaOptions.SaslPassword : "";
         }
 	}
 }
