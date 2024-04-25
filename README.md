@@ -31,11 +31,22 @@ public class Startup
     {
         var bootstrapServers = builder.Configuration.GetValue<string>("Kafka:BootstrapServers");
         var consumerGroupId = builder.Configuration.GetValue<string>("Kafka:ConsumerGroupId");
+        bool useSasl = builder.Configuration.GetValue<bool>("Kafka:UseSasl");
+        var saslMechanism = builder.Configuration.GetValue<string>("Kafka:SaslMechanism");
+        var securityProtocol = builder.Configuration.GetValue<string>("Kafka:SecurityProtocol");
+        var saslUsername = builder.Configuration.GetValue<string>("Kafka:SaslUsername");
+        var saslPassword = builder.Configuration.GetValue<string>("Kafka:SaslPassword");
+
         KafkaOptions kafkaOptions = new KafkaOptions
         {
             BootstrapServers = bootstrapServers,
             ConsumerGroupId = consumerGroupId,
             Debug = "generic" // or "generic,broker,security"
+            UseSasl = useSasl,
+            SaslMechanism = saslMechanism,
+            SecurityProtocol = securityProtocol,
+            SaslUsername = saslUsername,
+            SaslPassword = saslPassword
         };
         
         builder.Services.AddLogging();
@@ -52,11 +63,21 @@ Configuration:
 ```
 var bootstrapServers = builder.Configuration.GetValue<string>("Kafka:BootstrapServers");
 var clientId = builder.Configuration.GetValue<string>("Kafka:ClientId");
+bool useSasl = builder.Configuration.GetValue<bool>("Kafka:UseSasl");
+var saslMechanism = builder.Configuration.GetValue<string>("Kafka:SaslMechanism");
+var securityProtocol = builder.Configuration.GetValue<string>("Kafka:SecurityProtocol");
+var saslUsername = builder.Configuration.GetValue<string>("Kafka:SaslUsername");
+var saslPassword = builder.Configuration.GetValue<string>("Kafka:SaslPassword");
 KafkaOptions kafkaOptions = new KafkaOptions
 {
     BootstrapServers = bootstrapServers,
     ClientId = clientId,
-    Debug = "generic" // or "generic,broker,security"
+    Debug = "generic" // or "generic,broker,security",
+    UseSasl = useSasl,
+    SaslMechanism = saslMechanism,
+    SecurityProtocol = securityProtocol,
+    SaslUsername = saslUsername,
+    SaslPassword = saslPassword
 };
 
 builder.Services.UseKafkaProducer();

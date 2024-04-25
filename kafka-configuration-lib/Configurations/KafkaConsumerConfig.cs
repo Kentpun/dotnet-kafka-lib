@@ -15,10 +15,18 @@ namespace kafka_configuration_lib.Configurations
 			this.ConsumerConfig = new ConsumerConfig
 			{
 				BootstrapServers = BootstrapServerEndpoints,
-				GroupId = ConsumerGroupId,
+                GroupId = ConsumerGroupId,
 				AutoOffsetReset = AutoOffsetReset.Earliest,
 				Debug = kafkaOptions.Debug
 			};
+
+			if (kafkaOptions.UseSasl)
+			{
+				this.ConsumerConfig.SaslMechanism = Enum.Parse<SaslMechanism>(kafkaOptions.SaslMechanism);
+                this.ConsumerConfig.SecurityProtocol = Enum.Parse<SecurityProtocol>(kafkaOptions.SecurityProtocol);
+                this.ConsumerConfig.SaslUsername = kafkaOptions.SaslUsername;
+                this.ConsumerConfig.SaslPassword = kafkaOptions.SaslPassword;
+			}
 
         }
 	}

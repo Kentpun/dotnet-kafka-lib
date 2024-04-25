@@ -23,6 +23,14 @@ namespace kafka_configuration_lib.Configurations
                 CompressionType = CompressionType.Gzip,
                 MaxInFlight = 5
             };
+
+            if (kafkaOptions.UseSasl)
+            {
+                this.ProducerConfig.SaslMechanism = Enum.Parse<SaslMechanism>(kafkaOptions.SaslMechanism);
+                this.ProducerConfig.SecurityProtocol = Enum.Parse<SecurityProtocol>(kafkaOptions.SecurityProtocol);
+                this.ProducerConfig.SaslUsername = kafkaOptions.SaslUsername;
+                this.ProducerConfig.SaslPassword = kafkaOptions.SaslPassword;
+            }
         }
 	}
 }
