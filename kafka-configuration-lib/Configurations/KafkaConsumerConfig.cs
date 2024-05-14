@@ -1,6 +1,6 @@
 ﻿using System;
 using Confluent.Kafka;
-namespace kafka_configuration_lib.Configurations
+namespace KP.Lib.Kafka.Configurations
 {
 	public class KafkaConsumerConfig
 	{

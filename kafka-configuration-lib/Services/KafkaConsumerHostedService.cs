@@ -1,10 +1,10 @@
 using System.Reflection;
-using kafka_configuration_lib.Configurations;
-using kafka_configuration_lib.Examples;
+using KP.Lib.Kafka.Configurations;
+using KP.Lib.Kafka.Examples;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 
-namespace kafka_configuration_lib.Services;
+namespace KP.Lib.Kafka.Services;
 
 
 public class KafkaConsumerHostedService : BackgroundService

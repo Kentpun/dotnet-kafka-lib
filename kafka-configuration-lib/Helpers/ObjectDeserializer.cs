@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Confluent.Kafka;
 
-namespace kafka_configuration_lib.Helpers;
+namespace KP.Lib.Kafka.Helpers;
 
 public class ObjectDeserializer<T> : IDeserializer<T>
 {

@@ -1,4 +1,4 @@
-namespace kafka_configuration_lib.Examples;
+namespace KP.Lib.Kafka.Examples;
 
 public class TestClass
 {

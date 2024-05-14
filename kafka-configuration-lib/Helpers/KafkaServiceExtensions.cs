@@ -1,13 +1,13 @@
 ﻿using System;
-using kafka_configuration_lib.Configurations;
+using KP.Lib.Kafka.Configurations;
 using Confluent.Kafka;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using kafka_configuration_lib.Services;
+using KP.Lib.Kafka.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace kafka_configuration_lib.Helpers
+namespace KP.Lib.Kafka.Helpers
 {
 	public static class KafkaServiceExtensions
 	{

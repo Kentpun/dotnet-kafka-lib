@@ -2,10 +2,10 @@
 using System.Reflection;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
-using kafka_configuration_lib.Configurations;
-using kafka_configuration_lib.Helpers;
+using KP.Lib.Kafka.Configurations;
+using KP.Lib.Kafka.Helpers;
 
-namespace kafka_configuration_lib
+namespace KP.Lib.Kafka
 {
 	public class KafkaConsumerClientFactory
 	{

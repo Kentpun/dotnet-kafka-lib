@@ -1,4 +1,4 @@
-namespace kafka_configuration_lib.Interfaces;
+namespace KP.Lib.Kafka.Interfaces;
 
 public interface IProducerClient
 {

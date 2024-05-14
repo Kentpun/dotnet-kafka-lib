@@ -1,6 +1,6 @@
-using kafka_configuration_lib.Configurations;
+using KP.Lib.Kafka.Configurations;
 
-namespace kafka_configuration_lib;
+namespace KP.Lib.Kafka;
 
 public class KafkaProducerClientFactory
 {

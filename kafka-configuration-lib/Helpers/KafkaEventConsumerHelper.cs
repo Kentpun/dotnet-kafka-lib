@@ -2,7 +2,7 @@
 using System.Text;
 using Newtonsoft.Json;
 
-namespace kafka_configuration_lib.Helpers
+namespace KP.Lib.Kafka.Helpers
 {
 	public static class KafkaEventConsumerHelper
 	{

@@ -1,10 +1,10 @@
 using System.Text;
 using Confluent.Kafka;
-using kafka_configuration_lib.Configurations;
-using kafka_configuration_lib.Helpers;
-using kafka_configuration_lib.Interfaces;
+using KP.Lib.Kafka.Configurations;
+using KP.Lib.Kafka.Helpers;
+using KP.Lib.Kafka.Interfaces;
 
-namespace kafka_configuration_lib;
+namespace KP.Lib.Kafka;
 
 public class KafkaProducerClient : IProducerClient
 {

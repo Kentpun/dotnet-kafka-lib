@@ -1,4 +1,4 @@
-﻿namespace kafka_configuration_lib
+﻿namespace KP.Lib.Kafka
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class KafkaConsumerAttribute : Attribute
