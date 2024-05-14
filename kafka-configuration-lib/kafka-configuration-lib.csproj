@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>kafka_configuration_lib</RootNamespace>
+    <RootNamespace>KP.Lib.Kafka</RootNamespace>
+    <AssemblyName>KP.Lib.Kafka</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	    <Title>DOTNET.LIB.KAFKA</Title>
+	    <Title>KP.LIB.KAFKA</Title>
 	    <Version>0.4.0</Version>
 	    <Description>Init</Description>
 	    <Authors>Kent</Authors>
