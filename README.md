@@ -4,6 +4,12 @@ This Configuration Library to assist on the configuration and registration of Ka
 
 ### Details
 
+#### Special Note
+Below usage and sample assume the use of both producer and consumer client provided by this Library
+
+If you are using another library's Producer Client, please note that the Consumer client is expecting an exact DotNet Type match specified in the Kafka message's header field: ```MessageType```. 
+
+
 #### Annotate consumer method
 
 The annotation/attribute takes two parameters:
