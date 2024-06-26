@@ -4,11 +4,13 @@
     public class KafkaConsumerAttribute : Attribute
     {
         public string Topic { get; set; }
-        public Type EventType { get; set; }
-        public KafkaConsumerAttribute(string topic, Type eventType)
+        public Type? EventType { get; set; }
+        public string SchemaRegistryUrl { get; set; }
+        public KafkaConsumerAttribute(string topic, Type? eventType, string? schemaRegistryUrl)
         {
             this.Topic = topic;
             this.EventType = eventType;
+            this.SchemaRegistryUrl = !string.IsNullOrEmpty(schemaRegistryUrl) ? schemaRegistryUrl : string.Empty;
         }
     }
 }

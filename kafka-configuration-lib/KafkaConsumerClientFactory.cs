@@ -16,9 +16,9 @@ namespace KP.Lib.Kafka
             _serviceProvider = serviceProvider;
         }
 
-        public KafkaConsumerClient CreateClient(MethodInfo methodInfo, Object instance, KafkaOptions options, Type eventType)
+        public KafkaConsumerClient CreateClient(MethodInfo methodInfo, Object instance, KafkaOptions options, Type eventType, string? schemaRegistryUrl)
         {
-            var client = new KafkaConsumerClient(options, _serviceProvider, eventType);
+            var client = new KafkaConsumerClient(options, _serviceProvider, eventType, schemaRegistryUrl);
             // var item = GetInstanceWithMethodAttribute(methodInfo, _serviceProvider);
             //
             // var instance = item.Item1;

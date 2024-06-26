@@ -44,6 +44,7 @@ namespace KP.Lib.Kafka.Helpers
                     var declaringType = serviceProvider.GetService(method.DeclaringType);
                     var attribute = method.GetCustomAttribute<KafkaConsumerAttribute>();
                     var eventType = attribute.EventType;
+                    var schemaRegistryUrl = !string.IsNullOrEmpty(attribute.SchemaRegistryUrl) ? attribute.SchemaRegistryUrl : "";
                     Console.WriteLine($"Registering KafkaConsumer: Class: {declaringType.ToString()}; EventType: {eventType.Name}; MethodName: {method.Name}");
                     services.AddSingleton<IHostedService, KafkaConsumerHostedService>(provider => new KafkaConsumerHostedService(
                         clientFactory,
@@ -52,7 +53,8 @@ namespace KP.Lib.Kafka.Helpers
                         new List<string>() { attribute.Topic },
                         eventType,
                         method,
-                        declaringType
+                        declaringType,
+                        schemaRegistryUrl
                     ));
                     Console.WriteLine($"Registration Succeed: {declaringType.ToString()}.{method.Name}");
                 }
