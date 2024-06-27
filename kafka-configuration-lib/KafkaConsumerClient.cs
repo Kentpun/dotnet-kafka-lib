@@ -66,17 +66,17 @@ namespace KP.Lib.Kafka
 
         protected virtual IConsumer<string, byte[]> BuildConsumer(ConsumerConfig config)
         {
-            if (_schemaRegistryConfig != null)
-            {
-                using (var schemaRegistry = new CachedSchemaRegistryClient(_schemaRegistryConfig))
-                {
-                    return new ConsumerBuilder<string, byte[]>(config)
-                        .SetValueDeserializer(new AvroDeserializer<byte[]>(schemaRegistry).AsSyncOverAsync())
-                        .SetErrorHandler(ConsumerClient_OnConsumeError)
-                        .Build();
-                }
+            //if (_schemaRegistryConfig != null)
+            //{
+            //    using (var schemaRegistry = new CachedSchemaRegistryClient(_schemaRegistryConfig))
+            //    {
+            //        return new ConsumerBuilder<string, byte[]>(config)
+            //            .SetValueDeserializer(new AvroDeserializer<byte[]>(schemaRegistry).AsSyncOverAsync())
+            //            .SetErrorHandler(ConsumerClient_OnConsumeError)
+            //            .Build();
+            //    }
                 
-            }
+            //}
             return new ConsumerBuilder<string, byte[]>(config)
                 .SetErrorHandler(ConsumerClient_OnConsumeError)
                 .Build();
@@ -147,12 +147,23 @@ namespace KP.Lib.Kafka
                                 // Console.WriteLine($"Message Content: {Encoding.UTF8.GetString(consumeResult.Message.Value)}");
                                 var topic = consumeResult.Topic;
                                 var message = consumeResult.Message.Value;
-                                var deserializedMessage = KafkaEventConsumerHelper.DeserializeEvent(_eventType, message);
-                                if (_topicMethods.TryGetValue(topic, out MethodInfo method) && 
-                                    _topicMethodInstances.TryGetValue(topic, out object instance))
+                                if (_eventType.Name != "Byte[]")
                                 {
-                                    var parameters = new object[] { deserializedMessage };
-                                    method.Invoke(instance, parameters);
+                                    var deserializedMessage = KafkaEventConsumerHelper.DeserializeEvent(_eventType, message);
+                                    if (_topicMethods.TryGetValue(topic, out MethodInfo method) &&
+                                    _topicMethodInstances.TryGetValue(topic, out object instance))
+                                    {
+                                        var parameters = new object[] { deserializedMessage };
+                                        method.Invoke(instance, parameters);
+                                    }
+                                } else
+                                {
+                                    if (_topicMethods.TryGetValue(topic, out MethodInfo method) &&
+                                    _topicMethodInstances.TryGetValue(topic, out object instance))
+                                    {
+                                        var parameters = new object[] { message };
+                                        method.Invoke(instance, parameters);
+                                    }
                                 }
                             }
                             else
