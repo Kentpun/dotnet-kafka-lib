@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Text;
 using Confluent.Kafka;
@@ -144,7 +144,7 @@ namespace KP.Lib.Kafka
                             if (messageType == _eventType.Name)
                             {
                                 // Process the message
-                                Console.WriteLine($"Message Content: {Encoding.UTF8.GetString(consumeResult.Message.Value)}");
+                                // Console.WriteLine($"Message Content: {Encoding.UTF8.GetString(consumeResult.Message.Value)}");
                                 var topic = consumeResult.Topic;
                                 var message = consumeResult.Message.Value;
                                 var deserializedMessage = KafkaEventConsumerHelper.DeserializeEvent(_eventType, message);
