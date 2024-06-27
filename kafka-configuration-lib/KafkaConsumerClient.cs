@@ -161,7 +161,7 @@ namespace KP.Lib.Kafka
                                     if (_topicMethods.TryGetValue(topic, out MethodInfo method) &&
                                     _topicMethodInstances.TryGetValue(topic, out object instance))
                                     {
-                                        var parameters = new object[] { message };
+                                        var parameters = new object[] { consumeResult.Message };
                                         method.Invoke(instance, parameters);
                                     }
                                 }
