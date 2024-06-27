@@ -141,22 +141,22 @@ namespace KP.Lib.Kafka
                         {
                             var messageType = Encoding.UTF8.GetString(messageTypeHeader.GetValueBytes());
                             var topic = consumeResult.Topic;
-                            
-                            // Check if the message type matches what you expect
 
+                            // Check if the message type matches what you expect
+                            var message = consumeResult.Message.Value;
                             if (_eventType.Name == "Byte[]")
                             {
                                 if (_topicMethods.TryGetValue(topic, out MethodInfo method) &&
                                 _topicMethodInstances.TryGetValue(topic, out object instance))
                                 {
-                                    var parameters = new object[] { consumeResult.Message };
+                                    var parameters = new object[] { message };
                                     method.Invoke(instance, parameters);
                                 }
                             } else if (messageType == _eventType.Name)
                             {
                                 // Process the message
                                 // Console.WriteLine($"Message Content: {Encoding.UTF8.GetString(consumeResult.Message.Value)}");
-                                var message = consumeResult.Message.Value;
+                                
                                 var deserializedMessage = KafkaEventConsumerHelper.DeserializeEvent(_eventType, message);
                                 if (_topicMethods.TryGetValue(topic, out MethodInfo method) &&
                                 _topicMethodInstances.TryGetValue(topic, out object instance))
