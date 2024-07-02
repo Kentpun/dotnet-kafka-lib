@@ -26,14 +26,14 @@ namespace KP.Lib.Kafka
 
         private IConsumer<string, byte[]> _consumer;
 
-        public KafkaConsumerClient(KafkaOptions options, IServiceProvider serviceProvider, Type eventType, string? schemaRegistryUrl)
+        public KafkaConsumerClient(KafkaOptions options, IServiceProvider serviceProvider, Type? eventType, string? schemaRegistryUrl)
         {
             _options = options;
             _consumerConfig = new KafkaConsumerConfig(options);
             _topicMethods = new Dictionary<string, MethodInfo>();
             _topicMethodInstances = new Dictionary<string, object>();
             _serviceProvider = serviceProvider;
-            _eventType = eventType;
+            _eventType = eventType != null ? eventType : typeof(Object);
             _schemaRegistryConfig = !string.IsNullOrEmpty(schemaRegistryUrl) ? new SchemaRegistryConfig { Url = schemaRegistryUrl } : null;
         }
 
@@ -67,17 +67,17 @@ namespace KP.Lib.Kafka
 
         protected virtual IConsumer<string, byte[]> BuildConsumer(ConsumerConfig config)
         {
-            if (_schemaRegistryConfig != null)
-            {
-                using (var schemaRegistry = new CachedSchemaRegistryClient(_schemaRegistryConfig))
-                {
-                    return new ConsumerBuilder<string, byte[]>(config)
-                        .SetValueDeserializer(new AvroDeserializer<byte[]>(schemaRegistry).AsSyncOverAsync())
-                        .SetErrorHandler(ConsumerClient_OnConsumeError)
-                        .Build();
-                }
+            //if (_schemaRegistryConfig != null)
+            //{
+            //    using (var schemaRegistry = new CachedSchemaRegistryClient(_schemaRegistryConfig))
+            //    {
+            //        return new ConsumerBuilder<string, byte[]>(config)
+            //            .SetValueDeserializer(new AvroDeserializer<byte[]>(schemaRegistry).AsSyncOverAsync())
+            //            .SetErrorHandler(ConsumerClient_OnConsumeError)
+            //            .Build();
+            //    }
 
-            }
+            //}
             return new ConsumerBuilder<string, byte[]>(config)
                 .SetErrorHandler(ConsumerClient_OnConsumeError)
                 .Build();
@@ -152,7 +152,7 @@ namespace KP.Lib.Kafka
                                     var parameters = new object[] { message };
                                     method.Invoke(instance, parameters);
                                 }
-                            } else if (messageType == _eventType.Name)
+                            } else if (messageType == _eventType.Name || _eventType.Name == "Object")
                             {
                                 // Process the message
                                 // Console.WriteLine($"Message Content: {Encoding.UTF8.GetString(consumeResult.Message.Value)}");
