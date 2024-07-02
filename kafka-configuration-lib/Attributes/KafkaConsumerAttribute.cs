@@ -12,6 +12,8 @@
             this.EventType = eventType;
             this.SchemaRegistryUrl = !string.IsNullOrEmpty(schemaRegistryUrl) ? schemaRegistryUrl : string.Empty;
         }
+
+        public KafkaConsumerAttribute(string Topic, Type EventType) : this(Topic, EventType, null) { }
     }
 }
 

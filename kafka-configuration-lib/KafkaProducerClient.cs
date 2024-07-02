@@ -35,7 +35,7 @@ public class KafkaProducerClient : IProducerClient
         try
         {
             var jsonText = KafkaEventPublisherHelper.SerializeEvent(data);
-            var messageType = data.GetType().FullName; // Get the full name of the type
+            var messageType = data.GetType().Name; // Get the name of the type
             var headers = new Headers();
             headers.Add("MessageType", Encoding.UTF8.GetBytes(messageType));
             var message = new Message<string, byte[]>

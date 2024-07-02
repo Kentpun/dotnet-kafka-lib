@@ -67,17 +67,17 @@ namespace KP.Lib.Kafka
 
         protected virtual IConsumer<string, byte[]> BuildConsumer(ConsumerConfig config)
         {
-            //if (_schemaRegistryConfig != null)
-            //{
-            //    using (var schemaRegistry = new CachedSchemaRegistryClient(_schemaRegistryConfig))
-            //    {
-            //        return new ConsumerBuilder<string, byte[]>(config)
-            //            .SetValueDeserializer(new AvroDeserializer<byte[]>(schemaRegistry).AsSyncOverAsync())
-            //            .SetErrorHandler(ConsumerClient_OnConsumeError)
-            //            .Build();
-            //    }
-                
-            //}
+            if (_schemaRegistryConfig != null)
+            {
+                using (var schemaRegistry = new CachedSchemaRegistryClient(_schemaRegistryConfig))
+                {
+                    return new ConsumerBuilder<string, byte[]>(config)
+                        .SetValueDeserializer(new AvroDeserializer<byte[]>(schemaRegistry).AsSyncOverAsync())
+                        .SetErrorHandler(ConsumerClient_OnConsumeError)
+                        .Build();
+                }
+
+            }
             return new ConsumerBuilder<string, byte[]>(config)
                 .SetErrorHandler(ConsumerClient_OnConsumeError)
                 .Build();
