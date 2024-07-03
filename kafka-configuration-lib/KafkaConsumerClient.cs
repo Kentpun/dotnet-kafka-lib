@@ -144,7 +144,7 @@ namespace KP.Lib.Kafka
 
                             // Check if the message type matches what you expect
                             var message = consumeResult.Message.Value;
-                            if (_eventType.Name == "Byte[]")
+                            if (_eventType.Name == "Byte[]" || _eventType.Name == "String")
                             {
                                 if (_topicMethods.TryGetValue(topic, out MethodInfo method) &&
                                 _topicMethodInstances.TryGetValue(topic, out object instance))
