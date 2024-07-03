@@ -144,12 +144,24 @@ namespace KP.Lib.Kafka
 
                             // Check if the message type matches what you expect
                             var message = consumeResult.Message.Value;
-                            if (_eventType.Name == "Byte[]" || _eventType.Name == "String")
+                            if (_eventType.Name == "Byte[]")
                             {
                                 if (_topicMethods.TryGetValue(topic, out MethodInfo method) &&
                                 _topicMethodInstances.TryGetValue(topic, out object instance))
                                 {
                                     var parameters = new object[] { message };
+                                    method.Invoke(instance, parameters);
+                                }
+                            } else if (_eventType.Name == "String")
+                            {
+                                // Process the message
+                                // Console.WriteLine($"Message Content: {Encoding.UTF8.GetString(consumeResult.Message.Value)}");
+
+                                string deserializedMessage = Encoding.UTF8.GetString(message);
+                                if (_topicMethods.TryGetValue(topic, out MethodInfo method) &&
+                                _topicMethodInstances.TryGetValue(topic, out object instance))
+                                {
+                                    var parameters = new object[] { deserializedMessage };
                                     method.Invoke(instance, parameters);
                                 }
                             } else if (messageType == _eventType.Name || _eventType.Name == "Object")
