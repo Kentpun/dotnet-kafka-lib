@@ -9,7 +9,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	    <Title>KP.LIB.KAFKA</Title>
 	    <Version>0.4.6</Version>
-	    <Description>Init</Description>
+	    <Description>Update: support SASL and deserialization flexibility</Description>
 	    <Authors>Kent</Authors>
   </PropertyGroup>
 
